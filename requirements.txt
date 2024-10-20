@@ -36,6 +36,7 @@ python3-openid
 pytz
 PyYAML
 referencing
+whitenoise
 requests
 requests-oauthlib
 rpds-py
