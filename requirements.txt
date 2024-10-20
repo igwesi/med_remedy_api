@@ -13,6 +13,7 @@ gunicorn
 django-cors-headers
 django-environ
 django-filter
+psycopg2-binary
 django-templated-mail
 django-unfold
 djangorestframework
