@@ -1,0 +1,496 @@
+openapi: 3.0.3
+info:
+  title: Tailored Remedy
+  version: 1.0.0
+  description: A medical management and tracking system
+paths:
+  /api/auth/change-password/:
+    post:
+      operationId: api_auth_change_password_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserChangePassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserChangePassword'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserChangePassword'
+          description: ''
+  /api/auth/login/:
+    post:
+      operationId: api_auth_login_create
+      description: |-
+        Handles user login and returns authentication tokens.
+
+        **POST** `/api/auth/login/`
+
+        Returns a JSON response with the authentication tokens and a success message.
+
+        **Request Body Values**
+
+        * `email`: The user's email address.
+
+        * `password`: The user's password.
+
+        **Response Values**
+
+        * `message`: A message indicating that the user is authenticated.
+
+        * `tokens`: A dictionary containing the user's authentication tokens, including the access token and refresh token.
+
+        **Status Codes**
+
+        * `200 OK`: The user is authenticated and the authentication tokens were returned successfully.
+
+        * `400 Bad Request`: The request was invalid, or the user is not authenticated.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLogin'
+          description: ''
+  /api/auth/me/:
+    get:
+      operationId: api_auth_me_retrieve
+      description: |-
+        Return the current user's profile information.
+
+        **GET** `/api/auth/me/`
+
+        Returns a JSON response with the current user's profile information.
+
+        **Response Values**
+
+        * `user`: The user's profile information, including their:
+
+            * user ID,
+
+            * first name,
+            * last name,
+            * date of birth,
+            * email address,
+            * location,
+            * is_active : whether they are active.
+        * `message`: A message indicating that the user is authenticated.
+
+        **Status Codes**
+
+        * `200 OK`: The user is authenticated and the profile information was returned successfully.
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: api_auth_me_update
+      description: |-
+        Update the current user's profile information.
+
+        **PUT** `/api/auth/me/`
+
+        Returns a JSON response with the updated user's profile information.
+
+        **Request Body Values**
+
+        * `first_name`: First name of the user
+
+        * `last_name`: Last name of the user
+        * `dob`: The user's date of birth (YYYY-MM-DD)
+        * `email`: The user's email address
+        * `location`: The user's location
+
+        **Response Values**
+
+        * `user`: The updated user's profile information, including their:
+
+            * user ID,
+
+            * first name,
+            * last name,
+            * date of birth,
+            * email address,
+            * location,
+            * is_active : whether they are active.
+
+        **Status Codes**
+
+        * `200 OK`: The user's profile information was updated successfully.
+
+        * `400 Bad Request`: The request was invalid, or the user's profile information could not be updated.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/auth/refresh/:
+    post:
+      operationId: api_auth_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/auth/register/:
+    post:
+      operationId: api_auth_register_create
+      description: |-
+        Handles user registration and returns a JSON response with the newly
+        created user's information and authentication tokens.
+
+        **POST** `/api/auth/register/`
+
+        Returns a JSON response with the newly created user's information and
+        authentication tokens.
+
+        **Request Body Values**
+
+        * `email`: The user's email address
+
+        * `first_name`: First name of the user
+        * `last_name`: Last name of the user
+        * `dob`: The user's date of birth (YYYY-MM-DD)
+        * `location`: The user's location
+        * `password`: The user's password.
+        * `password2`: The user's password confirmation.
+
+        **Response Values**
+
+        * `message`: A message indicating that the user was created successfully.
+
+        * `user`: The newly created user's email address.
+        * `tokens`: A dictionary containing the user's authentication tokens,
+            including the access token and refresh token.
+
+        **Status Codes**
+
+        * `201 Created`: The user was created successfully and the authentication
+
+            tokens were returned.
+        * `400 Bad Request`: The request was invalid, or the user could not be
+            created.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreation'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreation'
+          description: ''
+  /api/auth/reset-password/:
+    post:
+      operationId: api_auth_reset_password_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendPasswordResetEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendPasswordResetEmail'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendPasswordResetEmail'
+          description: ''
+  /api/auth/reset-password/confirm/:
+    post:
+      operationId: api_auth_reset_password_confirm_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPasswordReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserPasswordReset'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPasswordReset'
+          description: ''
+  /api/auth/verify/:
+    post:
+      operationId: api_auth_verify_create
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenVerify'
+          description: ''
+components:
+  schemas:
+    SendPasswordResetEmail:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+      required:
+      - email
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    TokenVerify:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+      required:
+      - token
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 100
+        last_name:
+          type: string
+          maxLength: 100
+        dob:
+          type: string
+          format: date
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        location:
+          type: string
+        is_active:
+          type: boolean
+          readOnly: true
+      required:
+      - dob
+      - email
+      - first_name
+      - id
+      - is_active
+      - last_name
+      - location
+    UserChangePassword:
+      type: object
+      properties:
+        new_password:
+          type: string
+          writeOnly: true
+          maxLength: 255
+        re_new_password:
+          type: string
+          writeOnly: true
+          maxLength: 255
+        current_password:
+          type: string
+          writeOnly: true
+          maxLength: 255
+      required:
+      - current_password
+      - new_password
+      - re_new_password
+    UserCreation:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        dob:
+          type: string
+          format: date
+        location:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        password2:
+          type: string
+          writeOnly: true
+      required:
+      - dob
+      - email
+      - first_name
+      - last_name
+      - location
+      - password
+      - password2
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+      - email
+      - password
+    UserPasswordReset:
+      type: object
+      properties:
+        uid:
+          type: string
+        token:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 255
+        password2:
+          type: string
+          writeOnly: true
+          maxLength: 255
+      required:
+      - password
+      - password2
+      - token
+      - uid
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

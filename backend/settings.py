@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 import os
 import environ
 from pathlib import Path
-
+from datetime import timedelta
 
 env = environ.Env()
 
@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+    'unfold', 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +43,10 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     'djoser',
+    'drf_yasg', #Swagger
+    'drf_spectacular',
+    
+    'apps.accounts',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +58,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+AUTH_USER_MODEL     = 'accounts.User'
+LOGIN_URL           = 'login_view'
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -85,6 +93,7 @@ DATABASES = {
     }
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -110,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -128,17 +137,24 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
-from datetime import timedelta
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
@@ -159,3 +175,45 @@ SIMPLE_JWT = {
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
 }
+
+DJOSER = {    
+    "SET_USERNAME_RETYPE"                   : True,
+    "SET_PASSWORD_RETYPE"                   : True,
+
+    "SEND_ACTIVATION_EMAIL"                 : True,
+    "SEND_CONFIRMATION_EMAIL"               : True,
+    
+    "USER_CREATE_PASSWORD_RETYPE"           : True,
+    "USERNAME_CHANGED_EMAIL_CONFIRMATION"   : True,
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION"   : True,
+
+    "LOGIN_FIELD"                           : "email",
+    # "USER_ID_FIELD"                         : "id,",
+
+    "ACTIVATION_URL"                        : "activate/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL"            : "password/reset/{uid}/{token}",
+    "USERNAME_RESET_CONFIRM_URL"            : "email/reset/confirm/{uid}/{token}",
+    
+    "SERIALIZERS": {
+        'user'          : 'apps.accounts.api.serializers.UserSerializer',
+        'current_user'  : 'apps.accounts.api.serializers.UserSerializer',
+        'user_delete'   : 'djoser.serializers.UserDeleteSerializer',   
+    },
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Tailored Remedy',
+    'DESCRIPTION': 'A medical management and tracking system',
+    'VERSION': '1.0.0',
+    'OAS_VERSION': '3.0.3',
+    'SERVE_PUBLIC': True,
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
+    'SERVE_AUTHENTICATION': None,
+    'SWAGGER_UI_FAVICON_HREF': 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png',
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
