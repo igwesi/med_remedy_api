@@ -8,6 +8,8 @@ from unfold.forms import (
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group as DefaultGroup
 from .models import User, Group
+from .blacklist import *
+
 
 @admin.register(User)
 class UserAdmin(UserAdmin, ModelAdmin):
@@ -41,5 +43,4 @@ class UserAdmin(UserAdmin, ModelAdmin):
 @admin.register(Group)
 class GroupAdmin(ModelAdmin):
     pass
-
 admin.site.unregister(DefaultGroup)
