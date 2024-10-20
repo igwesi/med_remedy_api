@@ -7,6 +7,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 
 import os
 import environ
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 
@@ -85,13 +86,21 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default='postgres://...',
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
