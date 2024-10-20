@@ -9,6 +9,7 @@ cryptography
 defusedxml
 dj-database-url
 Django
+gunicorn
 django-cors-headers
 django-environ
 django-filter
