@@ -28,7 +28,7 @@ jsonschema-specifications
 MarkupSafe
 oauthlib
 openapi-codec
-packaging=
+packaging
 psycopg-binary
 pycparser
 PyJWT
